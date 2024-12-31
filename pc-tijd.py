@@ -20,20 +20,36 @@ while True:
             rows = list(csv.reader(file))
 
         for i, row in enumerate(rows):
+            if len(row) < 4:
+                continue
+
             if time.strftime("%Y_%m_%d") in row[0]:
-                oude_activiteit = float(row[1])
-                nieuwe_activiteit = oude_activiteit + time_passed
-                rows[i][1] = str(round(nieuwe_activiteit))
+                nieuwe_uren = round(time_passed) // 3600
+                nieuwe_minuten = (round(time_passed) % 3600) // 60
+                nieuwe_seconden = round(time_passed) % 60
+
+                oude_uren = int(row[1])
+                oude_minuten = int(row[2])
+                oude_seconden = int(row[3])
+
+                nieuwe_uren_totaal = nieuwe_uren + oude_uren + (nieuwe_minuten + oude_minuten) // 60
+                nieuwe_minuten_totaal = (nieuwe_minuten + oude_minuten) % 60 + (nieuwe_seconden + oude_seconden) // 60
+                nieuwe_seconden_totaal = (nieuwe_seconden + oude_seconden) % 60
+
+                rows[i] = [time.strftime("%Y_%m_%d"),nieuwe_uren_totaal,nieuwe_minuten_totaal,nieuwe_seconden_totaal]
 
                 with open(file_obj, "w") as file:
                     csv.writer(file).writerows(rows)
 
-                print("oude activiteit ge-update")
+                print(rows[i])
                 last_activity = time.time()
                 break
 
         else:
-            nieuwe_line = [time.strftime("%Y_%m_%d"),str(round(time_passed))]
+            nieuwe_uren = round(time_passed) // 3600
+            nieuwe_minuten = (round(time_passed) % 3600) // 60
+            nieuwe_seconden = round(time_passed) % 60
+            nieuwe_line = [time.strftime("%Y_%m_%d"),nieuwe_uren,nieuwe_minuten,nieuwe_seconden]
 
             with open(file_obj, "a") as file:
                 csv.writer(file).writerow(nieuwe_line)
