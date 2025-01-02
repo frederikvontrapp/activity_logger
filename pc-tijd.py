@@ -1,28 +1,27 @@
-from pynput import keyboard, mouse
+# modules
 import time
 import csv
+import mouse
+import keyboard
 
 # functies
-def toetsenbord(key):
-    global activity_detected
+def log_activity():
+    global activity_detected, last_activity
     activity_detected = True
-
-def muis(x, y):
-    global activity_detected
-    activity_detected = True
+    last_activity = time.time()
 
 # variabelen
 file_obj = '/home/saartje/exe/programmeren/python/pc_tijd_loggen/pc_tijd_logggen.csv'
 activity_detected = False
-toetsenbord_luisteren = keyboard.Listener(on_press=toetsenbord)
-muis_luisteren = mouse.Listener(on_move=muis, on_click=muis)
+last_activity= time.time()
 
 # starten
-toetsenbord_luisteren.start()
-muis_luisteren.start()
-last_activity = time.time()
+keyboard.on_press(lambda _:log_activity())
 
 # hoofd loop
+while not activity_detected:
+    time.sleep(0.1)
+
 while activity_detected:
     user_input = input("meet activiteit...")
 
