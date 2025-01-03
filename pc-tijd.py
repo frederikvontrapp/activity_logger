@@ -4,18 +4,27 @@ import csv
 import mouse
 import keyboard
 
+
 # functies
 def log_activity():
     global activity_detected, last_activity
     activity_detected = True
     last_activity = time.time()
 
-# variabelen
-file_obj = '/home/saartje/exe/programmeren/python/pc_tijd_loggen/pc_tijd_logggen.csv'
-activity_detected = False
-last_activity= time.time()
+def calculate_time_parts(seconds):
+    hours = seconds // 3600
+    minutes = (seconds % 3600) // 60
+    seconds = seconds % 60
+    return hours, minutes, seconds
 
-# starten
+
+# variabelen
+log_file = '/home/saartje/exe/programmeren/python/pc_tijd_loggen/pc_tijd_loggen.csv'
+activity_detected = False
+last_activity = time.time()
+
+
+# start luisteren
 keyboard.on_press(lambda _:log_activity())
 
 # hoofd loop
@@ -23,16 +32,16 @@ while not activity_detected:
     time.sleep(0.1)
 
 while activity_detected:
-    user_input = input("meet activiteit...")
-
     current_time = time.time()
     time_passed = current_time - last_activity
 
-    print(round(time_passed))
+    print(f"Time passed: {time_passed:.0f} seconds")
 
-    if time_passed > 5:
+    time.sleep(1)
 
-        with open(file_obj, "r") as file:
+    if time_passed >= 5:
+
+        with open(log_file, "r") as file:
             rows = list(csv.reader(file))
 
         for i, row in enumerate(rows):
@@ -40,9 +49,8 @@ while activity_detected:
                 continue
 
             if time.strftime("%Y_%m_%d") in row[0]:
-                nieuwe_uren = round(time_passed) // 3600
-                nieuwe_minuten = (round(time_passed) % 3600) // 60
-                nieuwe_seconden = round(time_passed) % 60
+                new_hours, new_minutes, new_seconds = calculate_time_parts(round(time_passed))
+                old_hours, old_minutes, old_seconds = map(int, row[1:4])
 
                 oude_uren = int(row[1])
                 oude_minuten = int(row[2])
@@ -59,6 +67,7 @@ while activity_detected:
 
                 print(rows[i])
                 last_activity = time.time()
+                activity_detected = False
                 break
 
         else:
@@ -72,3 +81,4 @@ while activity_detected:
 
             print(nieuwe_line)
             last_activity = time.time()
+            activity_detected = False
