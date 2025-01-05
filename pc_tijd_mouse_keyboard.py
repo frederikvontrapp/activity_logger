@@ -45,7 +45,7 @@ while True:
         inactivity_period = current_time - last_activity
         total_active_time = current_time - first_activity
 
-        print(f"inactive since: {inactivity_period:.0f} seconds")
+#        print(f"inactive since: {inactivity_period:.0f} seconds")
 
         time.sleep(1)
 
@@ -67,13 +67,13 @@ while True:
                     new_seconds_total = (new_seconds + old_seconds) % 60
 
                     rows[i] = [date_today, new_hours_total,new_minutes_total,new_seconds_total]
-                    print(f"updated: {rows[i]}")
+#                    print(f"updated: {rows[i]}")
                     break
 
             else:
                 new_hours, new_minutes, new_seconds = calculate_time_parts(round(total_active_time))
                 rows.append([date_today, new_hours, new_minutes, new_seconds])
-                print(f"appended: {[date_today, new_hours, new_minutes, new_seconds]}")
+#                print(f"appended: {[date_today, new_hours, new_minutes, new_seconds]}")
 
             with open(log_file, "w") as file:
                 csv.writer(file).writerows(rows)
